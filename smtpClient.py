@@ -1,99 +1,72 @@
-#!/usr/bin/env python3
-"""
-SMTP Client - Educational/Testing Purposes Only
-Demonstrates raw SMTP protocol implementation
-"""
 from socket import *
 
-# Configuration
-mailserver = 'localhost'
-port = 1025  # Use 1025 for testing (aiosmtpd default)
 
-# Email content
-sender = 'alice@example.com'
-recipient = 'bob@example.com'
-subject = 'Test Email from Raw SMTP Client'
-body = 'Hello! This is a test message sent using raw SMTP commands.\n\nBest regards,\nAlice'
+def smtp_client(port=1025, mailserver='127.0.0.1'):
+    msg = "\r\n My message"
+    endmsg = "\r\n.\r\n"
 
-# Construct message with headers
-msg = f"Subject: {subject}\r\n"
-msg += f"From: {sender}\r\n"
-msg += f"To: {recipient}\r\n"
-msg += "\r\n"  # Blank line separates headers from body
-msg += body
+    # Choose a mail server (e.g. Google mail server) if you want to verify the script beyond GradeScope
 
-endmsg = "\r\n.\r\n"  # SMTP end-of-message indicator
+    # Create socket called clientSocket and establish a TCP connection with mailserver and port
 
-print('='*60)
-print('SMTP Client Starting...')
-print('='*60)
-
-try:
-    # Section 1: Create Socket Connection
-    print(f'\n[1] Connecting to {mailserver}:{port}...')
+    # Fill in start
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((mailserver, port))
-    recv = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv.strip()}')
+    # Fill in end
 
-    # Section 2: HELO Command (introduce ourselves)
-    print('\n[2] Sending HELO...')
-    heloCommand = 'HELO client\r\n'
+    recv = clientSocket.recv(1024).decode()
+    #print(recv) #You can use these print statement to validate return codes from the server.
+    #if recv[:3] != '220':
+    #    print('220 reply not received from server.')
+
+    # Send HELO command and print server response.
+    heloCommand = 'HELO Alice\r\n'
     clientSocket.send(heloCommand.encode())
     recv1 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv1.strip()}')
+    #print(recv1) 
+    #if recv1[:3] != '250':
+    #    print('250 reply not received from server.')
 
-    # Section 3: MAIL FROM Command
-    print(f'\n[3] Sending MAIL FROM: <{sender}>...')
-    mailFromCommand = f'MAIL FROM: <{sender}>\r\n'
+    # Send MAIL FROM command and handle server response.
+    # Fill in start
+    mailFromCommand = 'MAIL FROM: <sender@example.com>\r\n'
     clientSocket.send(mailFromCommand.encode())
     recv2 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv2.strip()}')
+    # Fill in end
 
-    # Section 4: RCPT TO Command
-    print(f'\n[4] Sending RCPT TO: <{recipient}>...')
-    rcptToCommand = f'RCPT TO: <{recipient}>\r\n'
+    # Send RCPT TO command and handle server response.
+    # Fill in start
+    rcptToCommand = 'RCPT TO: <recipient@example.com>\r\n'
     clientSocket.send(rcptToCommand.encode())
     recv3 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv3.strip()}')
+    # Fill in end
 
-    # Section 5: DATA Command
-    print('\n[5] Sending DATA command...')
+    # Send DATA command and handle server response.
+    # Fill in start
     dataCommand = 'DATA\r\n'
     clientSocket.send(dataCommand.encode())
     recv4 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv4.strip()}')
+    # Fill in end
 
-    # Section 6: Send Message
-    print('\n[6] Sending message content...')
+    # Send message data.
+    # Fill in start
     clientSocket.send(msg.encode())
-    print(f'    Message length: {len(msg)} bytes')
+    # Fill in end
 
-    # Section 7: End Message
-    print('\n[7] Sending end-of-message indicator...')
+    # Message ends with a single period, send message end and handle server response.
+    # Fill in start
     clientSocket.send(endmsg.encode())
     recv5 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv5.strip()}')
+    # Fill in end
 
-    # Section 8: QUIT Command
-    print('\n[8] Sending QUIT...')
+    # Send QUIT command and handle server response.
+    # Fill in start
     quitCommand = 'QUIT\r\n'
     clientSocket.send(quitCommand.encode())
     recv6 = clientSocket.recv(1024).decode()
-    print(f'    Server: {recv6.strip()}')
     clientSocket.close()
+    # Fill in end
 
-    print('\n' + '='*60)
-    print('[SUCCESS] Email sent successfully!')
-    print('='*60)
 
-except ConnectionRefusedError:
-    print('\n[ERROR] Could not connect to SMTP server')
-    print(f'   Make sure smtp_server.py is running on {mailserver}:{port}')
-except Exception as e:
-    print(f'\n[ERROR] {e}')
-finally:
-    try:
-        clientSocket.close()
-    except:
-        pass
+if __name__ == '__main__':
+    smtp_client(1025, '127.0.0.1')
